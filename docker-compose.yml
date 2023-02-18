@@ -241,6 +241,7 @@ services:
     tmpfs:
       - /var/log
 
+
   pfclient:
 # pfclient feeds ADS-B and UAT data (from readsb) to Plane Finder. It also includes a GUI Radar website and a status website  
     image: ghcr.io/sdr-enthusiasts/docker-planefinder:latest
@@ -257,6 +258,7 @@ services:
       - LONG=${FEEDER_LONG}
       - TZ=${FEEDER_TZ}
       - SHARECODE=${PLANEFINDER_SHARECODE}
+
 
   rbfeeder:
 # rbfeeder feeds ADS-B and UAT data (from readsb) to RadarBox.
@@ -310,7 +312,8 @@ services:
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
       - "/etc/timezone:/etc/timezone:ro"
-      
+
+
   planewatch:
     # planewatch feeds ADS-B and UAT data (from readsb) to Plane.Watch.
     image: planewatch/plane-watch
@@ -336,7 +339,7 @@ services:
       - /run:exec,size=64M
       - /var/log
 
-  
+
   adsbhub:
     # adsbhub feeds ADS-B and UAT data (from readsb) to ADSB Hub.
     image: ghcr.io/sdr-enthusiasts/docker-adsbhub
@@ -352,13 +355,14 @@ services:
       - SBSHOST=readsb
       #- CLIENTKEY=${ADSBHUB_STATION_KEY}
 
+
   ######################################################################################################################################
   # ADS-B Visualization Services. These containers create pretty web pages from ADSB/UAT data that your station receives.
   # Containers include:
   # tar1090 (most people's preferred "radar" application
   # planefence (monitor planes nearby your station and planes from a "special" watchlist)
   # screenshot (auxilary container used with planefence -- only runs well on Pi4)
-  ######################################################################################################################################
+
 
   tar1090:
     image: ghcr.io/sdr-enthusiasts/docker-tar1090
@@ -394,6 +398,7 @@ services:
     tmpfs:
       - /run:exec,size=64M
       - /var/log
+
 
   planefence:
 # Note - after initial startup, please edit /opt/adsb/planefence/config/planefence.config. Then restart this container.
@@ -462,15 +467,16 @@ services:
     volumes:
       - /opt/adsb/rtlsdr-airband:/run/rtlsdr-airband 
 
+
 ######################################################################################################################################
 # Additional aircraft related containers: ACARS/VDLM
-# With these containers, you can receive and look at ACARS and VDL-M2 messages and feed those to ariframes.io.
+# With these containers, you can receive and look at ACARS and VDL-M2 messages and feed those to airframes.io.
 # Note that the plane.watch container is also set up to forward these messages.
 # The set consists of the following containers:
-# acarsdec: receives and decodes ACARS data from a dedicated RTL-SDR dongle
-# dumpvdl2: receives and decodes VDL-M2 data from a dedicated RTL-SDR dongle
-# acars_router: functions as an aggregator/distributor of the received ACARS and VDL-M2 data
-# acarshub: visualization tool for ACARS and VDL-M2 data
+#   acarsdec: receives and decodes ACARS data from a dedicated RTL-SDR dongle
+#   dumpvdl2: receives and decodes VDL-M2 data from a dedicated RTL-SDR dongle
+#   acars_router: functions as an aggregator/distributor of the received ACARS and VDL-M2 data
+#   acarshub: visualization tool for ACARS and VDL-M2 data
 
   acarsdec:
     image: ghcr.io/sdr-enthusiasts/docker-acarsdec:latest
@@ -492,7 +498,8 @@ services:
     tmpfs:
       - /run:exec,size=64M
       - /var/log
-      
+
+
   dumpvdl2:
     image: ghcr.io/sdr-enthusiasts/docker-dumpvdl2:latest
     profiles:
@@ -517,6 +524,7 @@ services:
       - /run:exec,size=64M
       - /var/log
 
+
   acars_router:
     image: ghcr.io/sdr-enthusiasts/acars_router:latest
     profiles:
@@ -537,6 +545,7 @@ services:
     tmpfs:
       - /run:exec,size=64M
       - /var/log
+
 
   acarshub:
     image: ghcr.io/sdr-enthusiasts/docker-acarshub:latest
@@ -569,7 +578,6 @@ services:
 # Although it's possible (and easy) to add SSL connectivity for websites that are exposed to the Internet,
 # the setup below doesn't include this. 
 # Additionally, you can host your own web pages in this directory: /opt/adsb/webproxy/html
-  ####################################################################################################################################
 
   webproxy:
     image: kx1t/webproxy:dev
@@ -708,7 +716,6 @@ services:
   # vnstat: shows network usage on a per interface (global and per container) basis
   # autoheal: restarts containers when they are deemed "unhealthy"
   # watchtower: checks every 24 hours for new versions of the containers, and downloads/installs/starts them
-  ######################################################################################################################################
 
   vnstat:
     image: vergoh/vnstat
@@ -731,6 +738,7 @@ services:
       - PAGE_REFRESH=0
       - SERVER_NAME="ADSB Station IO Stats"
 
+
   autoheal:
     image: willfarrell/autoheal
     tty: true
@@ -741,6 +749,7 @@ services:
       - AUTOHEAL_CONTAINER_LABEL=all
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+
 
   watchtower:
     image: containrrr/watchtower
@@ -758,7 +767,6 @@ services:
 
   ######################################################################################################################################
   # InfluxDB
-  ######################################################################################################################################
 
   influxdb:
     image: influxdb
