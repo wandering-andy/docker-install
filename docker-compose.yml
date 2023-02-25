@@ -815,6 +815,7 @@ services:
       - INFLUXDB_V2_ORG=${INFLUXDB_V2_ORG}
 
   lazydocker:
+  # https://github.com/jesseduffield/lazydocker
     build:
       context: https://github.com/jesseduffield/lazydocker.git
       args:
@@ -824,6 +825,7 @@ services:
     container_name: lazydocker
     profiles:
       - base
+    restart: unless-stopped
     stdin_open: true
     tty: true
     volumes:
