@@ -23,7 +23,7 @@ version: "3.8"
 
 networks:
   default:
-    name: adsb-net
+    name: ${NETWORK_NAME}
 
 services:
   ######################################################################################################################################
@@ -104,8 +104,8 @@ services:
       - READSB_RTLSDR_PPM=${ADSB_DONGLE_PPM}
       - READSB_GAIN=${ADSB_DONGLE_GAIN}
       - DUMP978_RTLSDR_DEVICE=${UAT_DONGLE_SERIAL}
-      - DUMP978_SDR_GAIN=${ADSB_DONGLE_GAIN}
-      - DUMP978_SDR_PPM=${ADSB_DONGLE_PPM}
+      - DUMP978_SDR_GAIN=${UAT_DONGLE_GAIN}
+      - DUMP978_SDR_PPM=${UAT_DONGLE_PPM}
       - AUTOGAIN_INITIAL_PERIOD=7200
     volumes:
       - /opt/adsb/dump978/autogain:/run/autogain
@@ -378,7 +378,6 @@ services:
 
   tar1090:
     image: ghcr.io/sdr-enthusiasts/docker-tar1090
-    profiles:
     tty: true
     container_name: tar1090
     hostname: tar1090
@@ -468,7 +467,7 @@ services:
     container_name: airband
     restart: always
     depends_on:
-      -rbfeeder
+      - rbfeeder
     devices:
       - /dev/bus/usb:/dev/bus/usb
     ports:
@@ -852,11 +851,12 @@ services:
 
 
   dozzle:
-  image: amir20/dozzle:latest
-  container_name: dozzle
-  profiles:
-    - debug
-  volumes:
-    - /var/run/docker.sock:/var/run/docker.sock
-  ports:
-    - "8001:8080"
+    image: amir20/dozzle:latest
+    container_name: dozzle
+    restart: unless-stopped
+    profiles:
+      - debug
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "8001:8080"
