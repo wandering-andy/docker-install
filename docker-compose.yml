@@ -9,13 +9,14 @@ version: "3.8"
 # -----------------
 # name      contains
 # -----------------
-# base          readsb, dump978, tar1090, lazydocker
-# feeders       multifeeder, piaware, fr24, abdsx, pfclient,
-                rbfeeder, radarvirtuel, planewatch, adsbhub, adsbx
-# mlat          mlathub 
-# extras        planefence, screenshot, vnstat, autoheal, watchtower, webproxy
-# influx        influxdb, grafana
-# acars         airband, acarsdec, dumpvdl2, acars_router, acarshub
+# no profile = base start = readsb, dump978, tar1090, lazydocker
+#
+# feeders  multifeeder, piaware, fr24, abdsx, pfclient,
+#          rbfeeder, radarvirtuel, planewatch, adsbhub, adsbx
+# mlat     mlathub 
+# extras   planefence, screenshot, vnstat, autoheal, watchtower, webproxy
+# influx   influxdb, grafana
+# acars    airband, acarsdec, dumpvdl2, acars_router, acarshub
 
 
 networks:
@@ -37,8 +38,6 @@ services:
     tty: true
     container_name: readsb
     hostname: readsb
-    profiles:
-      - base
     restart: always
     labels:
       - "autoheal=true"
@@ -92,8 +91,6 @@ services:
     tty: true
     container_name: dump978
     hostname: dump978
-    profiles:
-      - base
     restart: always
     labels:
       - "autoheal=true"
@@ -186,11 +183,9 @@ services:
   adsbx:
   # adsbx feeds ADS-B (from readsb) and UAT data (from dump978) to ADSBExchange
     image: ghcr.io/sdr-enthusiasts/docker-adsbexchange
-    profiles:
-      - feeders
     tty: true
     container_name: adsbx
-    hostname: adsbc
+    hostname: adsbx
     profiles:
       - feeders
     restart: always
@@ -382,7 +377,6 @@ services:
   tar1090:
     image: ghcr.io/sdr-enthusiasts/docker-tar1090
     profiles:
-      - base
     tty: true
     container_name: tar1090
     hostname: tar1090
@@ -441,7 +435,7 @@ services:
   screenshot:
     image: tedder42/browser-screenshot-service
     profiles:
-      - donotstart
+      - extras
     tty: true
     container_name: screenshot
     hostname: screenshot
@@ -845,8 +839,6 @@ services:
         GOARCH: arm64
     image: lazyteam/lazydocker
     container_name: lazydocker
-    profiles:
-      - base
     restart: unless-stopped
     stdin_open: true
     tty: true
