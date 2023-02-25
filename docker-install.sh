@@ -284,20 +284,9 @@ then
   sudo sed -i 's/^\(127.0.0.1\s*localhost\)\(.*\)/\1\2 localunixsocket localunixsocket.local localunixsocket.home/g' /etc/hosts
 fi
 
-echo ""
-echo "We\'ve installed these packages, and we think they may be useful for you in the future. So we will leave them installed:"
-echo "git, rtl-sdr"
-echo "If you don\'t want them, feel free to uninstall them using this command:"
-echo "sudo apt-get remove git rtl-sdr"
-echo ""
 echo "To make sure that everything works OK, you should reboot your machine."
-echo ""
-echo "WARNING - if you are connected remotely to a Raspberry Pi (via SSH or VNC)"
-echo "make sure you unplug any externally powered USB devices or hubs before rebooting"
-echo "because these may cause your Raspberry Pi to get stuck in the \"off\" state!"
-echo ""
-echo "Once rebooted, you are ready to go! For safety reasons we won't do the reboot for you, but you can do it manually by typing:"
 echo ""
 echo "sudo reboot"
 echo ""
-echo "That's all -- thanks for using our docker-install script. You are now ready to create docker-compose.yml files and start running containers!"
+echo "Grabbing docker-compose.yml from Github"
+git clone https://github.com/wandering-andy/docker-install.git
