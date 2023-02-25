@@ -1,5 +1,23 @@
 version: "3.8"
 
+######################
+# Profiles
+#
+# docker compose --profile [profile name(s)] up
+#
+# Profiles:
+# -----------------
+# name      contains
+# -----------------
+# base          readsb, dump978, tar1090, lazydocker
+# feeders       multifeeder, piaware, fr24, abdsx, pfclient,
+                rbfeeder, radarvirtuel, planewatch, adsbhub, adsbx
+# mlat          mlathub 
+# extras        planefence, screenshot, vnstat, autoheal, watchtower, webproxy
+# influx        influxdb, grafana
+# acars         airband, acarsdec, dumpvdl2, acars_router, acarshub
+
+
 networks:
   default:
     name: adsb-net
@@ -11,10 +29,6 @@ services:
   # readsb
   # dump978
   # mlathub
-  #
-  # In order to temporarily suspend a container and prevent it from starting, uncomment this from each container definition:
-  # #    profiles:
-  # #      - donotstart
 
   readsb:
     # readsb retrieves 1090MHz Mode A/C/S  data from the SDR(s)
@@ -23,6 +37,8 @@ services:
     tty: true
     container_name: readsb
     hostname: readsb
+    profiles:
+      - base
     restart: always
     labels:
       - "autoheal=true"
@@ -76,6 +92,8 @@ services:
     tty: true
     container_name: dump978
     hostname: dump978
+    profiles:
+      - base
     restart: always
     labels:
       - "autoheal=true"
@@ -95,12 +113,13 @@ services:
     tmpfs:
       - /run/readsb
 
+
   mlathub:
     # mlathub aggregates the MLAT results from various containers and makes this available to the visualization programs for display
     # Note - remove any unused services from the READSB_NET_CONNECTOR parameter
     image: ghcr.io/sdr-enthusiasts/docker-readsb-protobuf
     profiles:
-      - donotstart
+      - mlat
     tty: true
     container_name: mlathub
     hostname: mlathub
@@ -139,12 +158,13 @@ services:
   # radarvirtuel (RadarVirtuel)
   # planewatch (Plane.Watch)
   # ADSBHub (ADSB Hub)
+  # ASDBX
 
   multifeeder:
-    # Multifeeder (adsb.fi,adsb.lol,adsb.one and any other of the "new" aggregators)
+  # Multifeeder (adsb.fi,adsb.lol,adsb.one and any other of the "new" aggregators)
     image: ghcr.io/sdr-enthusiasts/docker-multifeeder
     profiles:
-      - donotstart
+      - feeders
     tty: true
     container_name: multifeeder
     hostname: multifeeder
@@ -163,37 +183,38 @@ services:
       - /run/readsb
       - /var/log
 
-  #  adsbx:
-  # # adsbx feeds ADS-B (from readsb) and UAT data (from dump978) to ADSBExchange
-  #     image: ghcr.io/sdr-enthusiasts/docker-adsbexchange
-  # #    profiles:
-  # #      - donotstart
-  #     tty: true
-  #     container_name: adsbx
-  #     hostname: adsbc
-  #     restart: always
-  #     labels:
-  #       - "autoheal=true"
-  #     depends_on:
-  #       - readsb
-  #     environment:
-  #       - BEASTHOST=readsb
-  #       - LAT=${FEEDER_LAT}
-  #       - LONG=${FEEDER_LONG}
-  #       - ALT=${FEEDER_ALT_M}m
-  #       - SITENAME=${ADSBX_SITENAME}
-  #       - UUID=${ADSBX_UUID}
-  #       - TZ=${FEEDER_TZ}
-  #     tmpfs:
-  #       - /run:exec,size=64M,uid=1000,gid=1000
-  #       - /var/log
-
+  adsbx:
+  # adsbx feeds ADS-B (from readsb) and UAT data (from dump978) to ADSBExchange
+    image: ghcr.io/sdr-enthusiasts/docker-adsbexchange
+    profiles:
+      - feeders
+    tty: true
+    container_name: adsbx
+    hostname: adsbc
+    profiles:
+      - feeders
+    restart: always
+    labels:
+      - "autoheal=true"
+    depends_on:
+      - readsb
+    environment:
+      - BEASTHOST=readsb
+      - LAT=${FEEDER_LAT}
+      - LONG=${FEEDER_LONG}
+      - ALT=${FEEDER_ALT_M}m
+      - SITENAME=${ADSBX_SITENAME}
+      - UUID=${ADSBX_UUID}
+      - TZ=${FEEDER_TZ}
+    tmpfs:
+      - /run:exec,size=64M,uid=1000,gid=1000
+      - /var/log
 
   piaware:
-    # piaware feeds ADS-B and UAT data (from readsb) to FlightAware. It also includes a GUI Radar website and a status website
+  # piaware feeds ADS-B and UAT data (from readsb) to FlightAware. It also includes a GUI Radar website and a status website
     image: ghcr.io/sdr-enthusiasts/docker-piaware
     profiles:
-      - donotstart
+      - feeders
     tty: true
     container_name: piaware
     hostname: piaware
@@ -215,14 +236,13 @@ services:
       - /run:exec,size=64M
       - /var/log
 
-
   fr24:
-    # fr24 feeds ADS-B and UAT data (from readsb) to FlightRadar24. It also includes a status website. Please be careful
+  # fr24 feeds ADS-B and UAT data (from readsb) to FlightRadar24. It also includes a status website. Please be careful
     # not to expose the status website to the internet as users may be able to start/stop/change the service from there.
     # Also note that FR24 has requested NOT to enable MLAT for those station that feed to multiple services; as such, it's commented out.
     image: ghcr.io/sdr-enthusiasts/docker-flightradar24
     profiles:
-      - donotstart
+      - feeders
     tty: true
     container_name: fr24
     hostname: fr24
@@ -241,12 +261,11 @@ services:
     tmpfs:
       - /var/log
 
-
   pfclient:
-# pfclient feeds ADS-B and UAT data (from readsb) to Plane Finder. It also includes a GUI Radar website and a status website  
+  # pfclient feeds ADS-B and UAT data (from readsb) to Plane Finder. It also includes a GUI Radar website and a status website  
     image: ghcr.io/sdr-enthusiasts/docker-planefinder:latest
     profiles:
-      - donotstart
+      - feeders
     tty: true
     container_name: pfclient
     restart: always
@@ -259,12 +278,11 @@ services:
       - TZ=${FEEDER_TZ}
       - SHARECODE=${PLANEFINDER_SHARECODE}
 
-
   rbfeeder:
-# rbfeeder feeds ADS-B and UAT data (from readsb) to RadarBox.
+  # rbfeeder feeds ADS-B and UAT data (from readsb) to RadarBox.
     image: ghcr.io/sdr-enthusiasts/docker-radarbox
     profiles:
-      - donotstart
+      - feeders
     tty: true
     container_name: rbfeeder
     hostname: rbfeeder
@@ -284,12 +302,11 @@ services:
       - /run:exec,size=64M
       - /var/log
 
- 
   radarvirtuel:
-# radarvirtuel feeds ADS-B and UAT data (from readsb) to RadarVirtuel.
+  # radarvirtuel feeds ADS-B and UAT data (from readsb) to RadarVirtuel.
     image: ghcr.io/sdr-enthusiasts/docker-radarvirtuel
     profiles:
-      - donotstart
+      - feeders
     tty: true
     container_name: radarvirtuel
     hostname: radarvirtuel
@@ -313,12 +330,11 @@ services:
       - "/etc/localtime:/etc/localtime:ro"
       - "/etc/timezone:/etc/timezone:ro"
 
-
   planewatch:
-    # planewatch feeds ADS-B and UAT data (from readsb) to Plane.Watch.
+  # planewatch feeds ADS-B and UAT data (from readsb) to Plane.Watch.
     image: planewatch/plane-watch
     profiles:
-      - donotstart
+      - feeders
     tty: true
     container_name: planewatch
     hostname: planewatch
@@ -339,12 +355,11 @@ services:
       - /run:exec,size=64M
       - /var/log
 
-
   adsbhub:
-    # adsbhub feeds ADS-B and UAT data (from readsb) to ADSB Hub.
+  # adsbhub feeds ADS-B and UAT data (from readsb) to ADSB Hub.
     image: ghcr.io/sdr-enthusiasts/docker-adsbhub
     profiles:
-      - donotstart
+      - feeders
     tty: true
     container_name: adsbhub
     restart: always
@@ -366,8 +381,8 @@ services:
 
   tar1090:
     image: ghcr.io/sdr-enthusiasts/docker-tar1090
-#    profiles:
-#      - donotstart
+    profiles:
+      - base
     tty: true
     container_name: tar1090
     hostname: tar1090
@@ -399,12 +414,11 @@ services:
       - /run:exec,size=64M
       - /var/log
 
-
   planefence:
-# Note - after initial startup, please edit /opt/adsb/planefence/config/planefence.config. Then restart this container.
+  # Note - after initial startup, please edit /opt/adsb/planefence/config/planefence.config. Then restart this container.
     image: kx1t/planefence:dev
     profiles:
-      - donotstart
+      - extras
     tty: true
     container_name: planefence
     hostname: planefence
@@ -453,10 +467,12 @@ services:
   airband:
     image: fredclausen/rtlsdrairband
     profiles:
-      - donotstart
+      - acars
     tty: true
     container_name: airband
     restart: always
+    depends_on:
+      -rbfeeder
     devices:
       - /dev/bus/usb:/dev/bus/usb
     ports:
@@ -481,7 +497,7 @@ services:
   acarsdec:
     image: ghcr.io/sdr-enthusiasts/docker-acarsdec:latest
     profiles:
-      - donotstart
+      - acars
     tty: true
     container_name: acarsdec
     restart: always
@@ -503,7 +519,7 @@ services:
   dumpvdl2:
     image: ghcr.io/sdr-enthusiasts/docker-dumpvdl2:latest
     profiles:
-      - donotstart
+      - acars
     tty: true
     container_name: dumpvdl2
     restart: always
@@ -528,7 +544,7 @@ services:
   acars_router:
     image: ghcr.io/sdr-enthusiasts/acars_router:latest
     profiles:
-      - donotstart
+      - acars
     tty: true
     container_name: acars_router
     restart: always
@@ -550,7 +566,7 @@ services:
   acarshub:
     image: ghcr.io/sdr-enthusiasts/docker-acarshub:latest
     profiles:
-      - donotstart
+      - acars
     tty: true
     container_name: acarshub
     hostname: acarshub
@@ -581,8 +597,8 @@ services:
 
   webproxy:
     image: kx1t/webproxy:dev
-#    profiles:
-#      - donotstart
+    profiles:
+      - extras
     tty: true
     container_name: webproxy
     hostname: webproxy
@@ -719,6 +735,8 @@ services:
 
   vnstat:
     image: vergoh/vnstat
+    profiles:
+      - extras
     container_name: vnstat
     restart: unless-stopped
     network_mode: "host"
@@ -744,6 +762,8 @@ services:
     tty: true
     container_name: autoheal
     hostname: autoheal
+    profiles:
+      - extras
     restart: always
     environment:
       - AUTOHEAL_CONTAINER_LABEL=all
@@ -756,6 +776,8 @@ services:
     tty: true
     container_name: watchtower
     hostname: watchtower
+    profiles:
+      - extras
     restart: always
     environment:
       - TZ=${FEEDER_TZ}
@@ -771,6 +793,8 @@ services:
   influxdb:
     image: influxdb
     container_name: influxdb
+    profiles:
+      - influx
     restart: unless-stopped
     ports:
       - 8086:8086
@@ -798,6 +822,8 @@ services:
         GOARCH: arm64
     image: lazyteam/lazydocker
     container_name: lazydocker
+    profiles:
+      - base
     stdin_open: true
     tty: true
     volumes:
