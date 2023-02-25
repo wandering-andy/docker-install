@@ -794,9 +794,8 @@ services:
     build:
       context: https://github.com/jesseduffield/lazydocker.git
       args:
-        BASE_IMAGE_BUILDER: golang
-        GOARCH: amd64
-        GOARM:
+        BASE_IMAGE_BUILDER: arm64v8/golang
+        GOARCH: arm64
     image: lazyteam/lazydocker
     container_name: lazydocker
     stdin_open: true
