@@ -16,7 +16,8 @@ version: "3.8"
 # feeders  multifeeder, piaware, fr24, abdsx, pfclient,
 #          rbfeeder, radarvirtuel, planewatch, adsbhub, adsbx
 # mlat     mlathub 
-# extras   planefence, screenshot, vnstat, autoheal, watchtower, webproxy
+# extras   planefence, screenshot, webproxy
+# health   vnstat, autoheal, watchtower,
 # influx   influxdb, grafana
 # acars    airband, acarsdec, dumpvdl2, acars_router, acarshub
 
@@ -731,7 +732,7 @@ services:
   vnstat:
     image: vergoh/vnstat
     profiles:
-      - extras
+      - health
     container_name: vnstat
     restart: unless-stopped
     network_mode: "host"
@@ -758,7 +759,7 @@ services:
     container_name: autoheal
     hostname: autoheal
     profiles:
-      - extras
+      - health
     restart: always
     environment:
       - AUTOHEAL_CONTAINER_LABEL=all
@@ -772,7 +773,7 @@ services:
     container_name: watchtower
     hostname: watchtower
     profiles:
-      - extras
+      - health
     restart: always
     environment:
       - TZ=${FEEDER_TZ}
