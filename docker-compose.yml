@@ -9,7 +9,9 @@ version: "3.8"
 # -----------------
 # name      contains
 # -----------------
-# no profile = base start = readsb, dump978, tar1090, lazydocker
+# no profile = base start = readsb, dump978, tar1090
+# 
+# debug    lazydocker, dozzle
 #
 # feeders  multifeeder, piaware, fr24, abdsx, pfclient,
 #          rbfeeder, radarvirtuel, planewatch, adsbhub, adsbx
@@ -839,9 +841,22 @@ services:
         GOARCH: arm64
     image: lazyteam/lazydocker
     container_name: lazydocker
+    profiles:
+      - debug
     restart: unless-stopped
     stdin_open: true
     tty: true
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./config:/.config/jesseduffield/lazydocker
+
+
+  dozzle:
+  image: amir20/dozzle:latest
+  container_name: dozzle
+  profiles:
+    - debug
+  volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+  ports:
+    - "8001:8080"
