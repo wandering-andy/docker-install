@@ -276,30 +276,29 @@ services:
 
   planewatch:
   # planewatch feeds ADS-B and UAT data (from readsb) to Plane.Watch.
-  image: planewatch/plane-watch
-    profiles:
-      - feeders
-      - feeders-basic
-    tty: true
-    container_name: planewatch
-    hostname: planewatch
-    restart: always
-    depends_on:
-      - readsb
-    environment:
-      - BEASTHOST=readsb
-      - TZ=${FEEDER_TZ}
-      - API_KEY=${PLANEWATCH_KEY}
-      - ACARS_HOST=acars_router
-      - VDLM2_HOST=acars_router
-      - DEBUG_LOGGING=true
-      - LAT=${FEEDER_LAT}
-      - LONG=${FEEDER_LONG}
-      - ALT=${FEEDER_ALT_FT}ft
-    tmpfs:
-      - /run:exec,size=64M
-      - /var/log
-
+    image: planewatch/plane-watch
+      profiles:
+        - feeders
+        - feeders-basic
+      tty: true
+      container_name: planewatch
+      hostname: planewatch
+      restart: always
+      depends_on:
+        - readsb
+      environment:
+        - BEASTHOST=readsb
+        - TZ=${FEEDER_TZ}
+        - API_KEY=${PLANEWATCH_KEY}
+        - ACARS_HOST=acars_router
+        - VDLM2_HOST=acars_router
+        - DEBUG_LOGGING=true
+        - LAT=${FEEDER_LAT}
+        - LONG=${FEEDER_LONG}
+        - ALT=${FEEDER_ALT_FT}ft
+      tmpfs:
+        - /run:exec,size=64M
+        - /var/log
 
   rbfeeder:
   # rbfeeder feeds ADS-B and UAT data (from readsb) to RadarBox.
@@ -404,7 +403,7 @@ services:
       - TAR1090_DEFAULTCENTERLAT=${FEEDER_LAT}
       - TAR1090_DEFAULTCENTERLON=${FEEDER_LONG}
       - TAR1090_SITESHOW=true
-      #- HEYWHATSTHAT_PANORAMA_ID=${HEYWHATSTHAT}
+      - HEYWHATSTHAT_PANORAMA_ID=${HEYWHATSTHAT}
       - ENABLE_TIMELAPSE1090=true
       #- MLATHOST=mlathub
       - TAR1090_ENABLE_AC_DB=true
