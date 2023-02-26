@@ -9,9 +9,8 @@ version: "3.8"
 # ----------------------------------------------------------------
 # name            contains
 # ----------------------------------------------------------------
-# no profile = base start = readsb, dump978, tar1090
+# no profile = base start = readsb, dump978, tar1090, lazydocker, dozzle
 # 
-# debug           lazydocker, dozzle
 # feeders-basic   multifeeder, piaware, planewatch
 # feeders         multifeeder, piaware, fr24, abdsx, pfclient,
 #                 rbfeeder, radarvirtuel, planewatch, adsbhub, adsbx
@@ -36,7 +35,6 @@ services:
 
   readsb:
     # readsb retrieves 1090MHz Mode A/C/S  data from the SDR(s)
-    # Note - remove "dump978,37981,raw_in;" from the READSB_NET_CONNECTOR parameter if your station doesn't support UAT.
     image: ghcr.io/sdr-enthusiasts/docker-readsb-protobuf
     tty: true
     container_name: readsb
@@ -89,8 +87,6 @@ services:
   dump978:
     # dump978 gets UAT data from the SDR
     image: ghcr.io/sdr-enthusiasts/docker-dump978
-    #    profiles:
-    #      - donotstart
     tty: true
     container_name: dump978
     hostname: dump978
@@ -152,7 +148,6 @@ services:
   ######################################################################################################################################
   # ADS-B Feeder Services. These containers feed ADS-B/UAT data to aggregator services.
   # Containers include:
-  # Multifeeder (adsb.fi,adsb.lol,adsb.one and any other of the "new" aggregators)
   # 
   # Site:               Container:    Profile:
   # --------------------------------------------------------
@@ -851,8 +846,6 @@ services:
         GOARCH: arm64
     image: lazyteam/lazydocker
     container_name: lazydocker
-    profiles:
-      - debug
     restart: unless-stopped
     stdin_open: true
     tty: true
@@ -865,8 +858,6 @@ services:
     image: amir20/dozzle:latest
     container_name: dozzle
     restart: unless-stopped
-    profiles:
-      - debug
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
