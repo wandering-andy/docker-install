@@ -6,20 +6,20 @@ version: "3.8"
 # docker compose --profile [profile name(s)] up
 #
 # Profiles:
-# -----------------
-# name      contains
-# -----------------
+# ----------------------------------------------------------------
+# name            contains
+# ----------------------------------------------------------------
 # no profile = base start = readsb, dump978, tar1090
 # 
-# debug    lazydocker, dozzle
-#
-# feeders  multifeeder, piaware, fr24, abdsx, pfclient,
-#          rbfeeder, radarvirtuel, planewatch, adsbhub, adsbx
-# mlat     mlathub 
-# extras   planefence, screenshot, webproxy
-# health   vnstat, autoheal, watchtower,
-# influx   influxdb, grafana
-# acars    airband, acarsdec, dumpvdl2, acars_router, acarshub
+# debug           lazydocker, dozzle
+# feeders-basic   multifeeder, piaware, planewatch
+# feeders         multifeeder, piaware, fr24, abdsx, pfclient,
+#                 rbfeeder, radarvirtuel, planewatch, adsbhub, adsbx
+# mlat            mlathub 
+# extras          planefence, screenshot, webproxy
+# health          vnstat, autoheal, watchtower,
+# influx          influxdb, grafana
+# acars           airband, acarsdec, dumpvdl2, acars_router, acarshub
 
 
 networks:
@@ -73,11 +73,11 @@ services:
       - READSB_GRAPH_MAX_MESSAGES_LINE=1
       - READSB_GRAPH_ALL_LARGE=yes
       - READSB_EXTRA_ARGS=api-port,8080
-      - INFLUXDB_URL=${INFLUXDB_URL}
-      - INFLUXDB_USERNAME=${INFLUXDB_USERNAME}
-      - INFLUXDB_PASSWORD=${INFLUXDB_PASSWORD}
-      - INFLUXDB_V2_BUCKET=${INFLUXDB_V2_BUCKET}
-      - INFLUXDB_V2_ORG=${INFLUXDB_V2_ORG}
+      # - INFLUXDB_URL=${INFLUXDB_URL}
+      # - INFLUXDB_USERNAME=${INFLUXDB_USERNAME}
+      # - INFLUXDB_PASSWORD=${INFLUXDB_PASSWORD}
+      # - INFLUXDB_V2_BUCKET=${INFLUXDB_V2_BUCKET}
+      # - INFLUXDB_V2_ORG=${INFLUXDB_V2_ORG}
     volumes:
       - /opt/adsb/readsb/collectd:/run/collectd
       - /opt/adsb/readsb/autogain:/run/autogain
