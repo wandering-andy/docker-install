@@ -22,7 +22,7 @@ version: "3.8"
 #
 #
 # most current usage:
-# docker compose --profile feeders-basic --profile mlat --profile health compose up -d
+# docker compose --profile feeders-basic --profile mlat --profile health up -d
 #
 
 networks:
@@ -283,28 +283,28 @@ services:
   planewatch:
   # planewatch feeds ADS-B and UAT data (from readsb) to Plane.Watch.
     image: planewatch/plane-watch
-      profiles:
-        - feeders
-        - feeders-basic
-      tty: true
-      container_name: planewatch
-      hostname: planewatch
-      restart: always
-      depends_on:
-        - readsb
-      environment:
-        - BEASTHOST=readsb
-        - TZ=${FEEDER_TZ}
-        - API_KEY=${PLANEWATCH_KEY}
-        - ACARS_HOST=acars_router
-        - VDLM2_HOST=acars_router
-        - DEBUG_LOGGING=true
-        - LAT=${FEEDER_LAT}
-        - LONG=${FEEDER_LONG}
-        - ALT=${FEEDER_ALT_FT}ft
-      tmpfs:
-        - /run:exec,size=64M
-        - /var/log
+    profiles:
+      - feeders
+      - feeders-basic
+    tty: true
+    container_name: planewatch
+    hostname: planewatch
+    restart: always
+    depends_on:
+      - readsb
+    environment:
+      - BEASTHOST=readsb
+      - TZ=${FEEDER_TZ}
+      - API_KEY=${PLANEWATCH_KEY}
+      #- ACARS_HOST=acars_router
+      #- VDLM2_HOST=acars_router
+      - DEBUG_LOGGING=true
+      - LAT=${FEEDER_LAT}
+      - LONG=${FEEDER_LONG}
+      - ALT=${FEEDER_ALT_FT}ft
+    tmpfs:
+      - /run:exec,size=64M
+      - /var/log
 
   rbfeeder:
   # rbfeeder feeds ADS-B and UAT data (from readsb) to RadarBox.
@@ -362,7 +362,8 @@ services:
   # Multifeeder (adsb.fi,adsb.lol,adsb.one and any other of the "new" aggregators)
     image: ghcr.io/sdr-enthusiasts/docker-multifeeder
     profiles:
-      - feeders, feeders-basic
+      - feeders
+      - feeders-basic
     tty: true
     container_name: multifeeder
     hostname: multifeeder
