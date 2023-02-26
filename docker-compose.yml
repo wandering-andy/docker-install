@@ -26,8 +26,10 @@ networks:
     name: ${NETWORK_NAME}
 
 services:
-  ######################################################################################################################################
-  # ADS-B/UAT Data Processing Services. These containers read data from dongles and/or other containers and decode or process this data.
+  #######################################################################
+  # ADS-B/UAT Data Processing Services. These containers read data from
+  # dongles and/or other containers and decode or process this data.
+  #
   # Containers include:
   # readsb
   # dump978
@@ -111,8 +113,8 @@ services:
 
 
   mlathub:
-    # mlathub aggregates the MLAT results from various containers and makes this available to the visualization programs for display
-    # Note - remove any unused services from the READSB_NET_CONNECTOR parameter
+    # mlathub aggregates the MLAT results from various containers
+    # and makes this available to the visualization programs for display.
     image: ghcr.io/sdr-enthusiasts/docker-readsb-protobuf
     profiles:
       - mlat
@@ -145,7 +147,7 @@ services:
       - /run/readsb
 
 
-  ######################################################################################################################################
+  ######################################################################################
   # ADS-B Feeder Services. These containers feed ADS-B/UAT data to aggregator services.
   # Containers include:
   # 
@@ -203,7 +205,8 @@ services:
       - /var/log
 
   piaware:
-  # piaware feeds ADS-B and UAT data (from readsb) to FlightAware. It also includes a GUI Radar website and a status website
+  # piaware feeds ADS-B and UAT data (from readsb) to FlightAware.
+  # It also includes a GUI Radar website and a status website
     image: ghcr.io/sdr-enthusiasts/docker-piaware
     profiles:
       - feeders
@@ -230,7 +233,8 @@ services:
       - /var/log
 
   fr24:
-  # fr24 feeds ADS-B and UAT data (from readsb) to FlightRadar24. It also includes a status website. Please be careful
+  # fr24 feeds ADS-B and UAT data (from readsb) to FlightRadar24.
+  # It also includes a status website. Please be careful
     # not to expose the status website to the internet as users may be able to start/stop/change the service from there.
     # Also note that FR24 has requested NOT to enable MLAT for those station that feed to multiple services; as such, it's commented out.
     image: ghcr.io/sdr-enthusiasts/docker-flightradar24
@@ -255,7 +259,8 @@ services:
       - /var/log
 
   pfclient:
-  # pfclient feeds ADS-B and UAT data (from readsb) to Plane Finder. It also includes a GUI Radar website and a status website  
+  # pfclient feeds ADS-B and UAT data (from readsb) to Plane Finder.
+  # It also includes a GUI Radar website and a status website  
     image: ghcr.io/sdr-enthusiasts/docker-planefinder:latest
     profiles:
       - feeders
@@ -373,8 +378,10 @@ services:
       - /var/log
 
 
-  ######################################################################################################################################
-  # ADS-B Visualization Services. These containers create pretty web pages from ADSB/UAT data that your station receives.
+  ######################################################################################
+  # ADS-B Visualization Services. These containers create pretty web pages from ADSB/UAT
+  # data that your station receives.
+  # 
   # Containers include:
   # tar1090 (most people's preferred "radar" application
   # planefence (monitor planes nearby your station and planes from a "special" watchlist)
@@ -416,7 +423,8 @@ services:
       - /var/log
 
   planefence:
-  # Note - after initial startup, please edit /opt/adsb/planefence/config/planefence.config. Then restart this container.
+  # Note - after initial startup, please edit /opt/adsb/planefence/config/planefence.config.
+  # Then restart this container.
     image: kx1t/planefence:dev
     profiles:
       - extras
@@ -460,10 +468,10 @@ services:
       - 5042:5042
 
  
-######################################################################################################################################
+#####################################################################################
 # Additional aircraft related containers: airband
-# This container allows listening to Airband radio and feeding this data to RadarBox. It also creates a local Icecast station you can
-# listen to.
+# This container allows listening to Airband radio and feeding this data to RadarBox.
+# It also creates a local Icecast station you can listen to.
 
   airband:
     image: fredclausen/rtlsdrairband
@@ -485,7 +493,7 @@ services:
       - /opt/adsb/rtlsdr-airband:/run/rtlsdr-airband 
 
 
-######################################################################################################################################
+##############################################################################################################
 # Additional aircraft related containers: ACARS/VDLM
 # With these containers, you can receive and look at ACARS and VDL-M2 messages and feed those to airframes.io.
 # Note that the plane.watch container is also set up to forward these messages.
@@ -589,7 +597,7 @@ services:
       - /var/log
 
 
-######################################################################################################################################
+##############################################################################################################
 # WebProxy translates unfriendly URLs like http://x.x.x.x:8091 into friendly URLs like http://x.x.x.x/acarshub
 # It also provides GeoIP filtering and Bot Filtering
 # Although it's possible (and easy) to add SSL connectivity for websites that are exposed to the Internet,
@@ -728,7 +736,7 @@ services:
       - "/etc/localtime:/etc/localtime:ro"
       - "/etc/timezone:/etc/timezone:ro"
 
-  ######################################################################################################################################
+  ############################################################################################################
   # Finally, a few "maintenance" containers that keep the rest of the stack healthy and up to date:
   # vnstat: shows network usage on a per interface (global and per container) basis
   # autoheal: restarts containers when they are deemed "unhealthy"
@@ -788,8 +796,8 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 
-  ######################################################################################################################################
-  # InfluxDB
+  ###############################################################################################################
+  # InfluxDB & Grafana
 
   influxdb:
     image: influxdb
@@ -838,21 +846,19 @@ services:
 
 
   lazydocker:
-  # https://github.com/jesseduffield/lazydocker
     build:
       context: https://github.com/jesseduffield/lazydocker.git
       args:
         BASE_IMAGE_BUILDER: arm64v8/golang
         GOARCH: arm64
+        GOARM: 8
     image: lazyteam/lazydocker
     container_name: lazydocker
-    restart: unless-stopped
     stdin_open: true
     tty: true
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./config:/.config/jesseduffield/lazydocker
-
+      - /opt/adsb/lazydocker:/.config/lazydocker
 
   dozzle:
     image: amir20/dozzle:latest
