@@ -19,7 +19,11 @@ version: "3.8"
 # health          vnstat, autoheal, watchtower,
 # influx          influxdb, grafana
 # acars           airband, acarsdec, dumpvdl2, acars_router, acarshub
-
+#
+#
+# most current usage:
+# docker compose --profile feeders-basic --profile mlat --profile health compose up -d
+#
 
 networks:
   default:
