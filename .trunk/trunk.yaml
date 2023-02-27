@@ -13,6 +13,10 @@ lint:
     - prettier@2.8.4
     - shellcheck@0.9.0
     - shfmt@3.5.0
+    # pulled from https://docs.trunk.io/docs/reference-trunk-yaml
+    - hadolint@2.6.0
+    - markdownlint@0.28.1
+    - pylint@2.8.1
 runtimes:
   enabled:
     - go@1.19.5
