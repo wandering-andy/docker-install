@@ -178,6 +178,8 @@ services:
     restart: always
     depends_on:
       - readsb
+    labels:
+      - "autoheal=true"
     environment:
       - TZ=${FEEDER_TZ}
       - SBSHOST=readsb
@@ -271,6 +273,8 @@ services:
     tty: true
     container_name: pfclient
     restart: always
+    labels:
+      - "autoheal=true"
     ports:
       - 8084:30053
     environment:
@@ -290,6 +294,8 @@ services:
     container_name: planewatch
     hostname: planewatch
     restart: always
+    labels:
+      - "autoheal=true"
     depends_on:
       - readsb
     environment:
@@ -339,6 +345,8 @@ services:
     container_name: radarvirtuel
     hostname: radarvirtuel
     restart: always
+    labels:
+      - "autoheal=true"
     depends_on:
       - tar1090
     environment:
@@ -368,6 +376,8 @@ services:
     container_name: multifeeder
     hostname: multifeeder
     restart: always
+    labels:
+      - "autoheal=true"
     depends_on:
       - readsb
     environment:
@@ -437,6 +447,8 @@ services:
     container_name: planefence
     hostname: planefence
     restart: always
+    labels:
+      - "autoheal=true"
     depends_on:
       - tar1090
     ports:
@@ -462,6 +474,8 @@ services:
     depends_on:
       - planefence
     restart: always
+    labels:
+      - "autoheal=true"
     shm_size: 1gb
     environment:
       - MAP_ARGS=zoom=8.5&hideSidebar&hideButtons&mapDim=0.2&monochromeMarkers=ff0000&outlineColor=505050&iconScale=1.5&enableLabels&extendedLabels=2&trackLabels
@@ -485,6 +499,8 @@ services:
     tty: true
     container_name: airband
     restart: always
+    labels:
+      - "autoheal=true"
     depends_on:
       - rbfeeder
     devices:
@@ -515,6 +531,8 @@ services:
     tty: true
     container_name: acarsdec
     restart: always
+    labels:
+      - "autoheal=true"
     devices:
       - /dev/bus/usb:/dev/bus/usb
     environment:
@@ -537,6 +555,8 @@ services:
     tty: true
     container_name: dumpvdl2
     restart: always
+    labels:
+      - "autoheal=true"
     devices:
       - /dev/bus/usb:/dev/bus/usb
     environment:
@@ -562,6 +582,8 @@ services:
     tty: true
     container_name: acars_router
     restart: always
+    labels:
+      - "autoheal=true"
     environment:
       - TZ=${FEEDER_TZ}
       - AR_SEND_UDP_ACARS=acarshub:5550;feed.acars.io:5550
@@ -585,6 +607,8 @@ services:
     container_name: acarshub
     hostname: acarshub
     restart: always
+    labels:
+      - "autoheal=true"
     ports:
       - 8091:80
     environment:
@@ -617,6 +641,8 @@ services:
     container_name: webproxy
     hostname: webproxy
     restart: always
+    labels:
+      - "autoheal=true"
     ports:
       - 80:80
       - 443:443
@@ -753,6 +779,8 @@ services:
       - health
     container_name: vnstat
     restart: unless-stopped
+    labels:
+      - "autoheal=true"
     network_mode: "host"
     ports:
       - 8685:8685
@@ -869,6 +897,8 @@ services:
     image: amir20/dozzle:latest
     container_name: dozzle
     restart: unless-stopped
+    labels:
+      - "autoheal=true"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
