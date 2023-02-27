@@ -23,3 +23,12 @@ actions:
     - trunk-check-pre-push
     - trunk-fmt-pre-commit
     - trunk-upgrade-available
+
+actions:
+  definitions:
+    - id: commitlint
+      runtime: node
+      packages_file: "actions/commitlint/package.json"
+      run: commitlint --edit ${0}
+      triggers:
+        - git_hooks: [commit-msg]
