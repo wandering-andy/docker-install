@@ -887,6 +887,8 @@ services:
         GOARM: 8
     image: lazyteam/lazydocker
     container_name: lazydocker
+    profiles:
+        - donotstart
     stdin_open: true
     tty: true
     volumes:
@@ -896,6 +898,8 @@ services:
   dozzle:
     image: amir20/dozzle:latest
     container_name: dozzle
+    profiles:
+        - donotstart
     restart: unless-stopped
     labels:
       - "autoheal=true"
