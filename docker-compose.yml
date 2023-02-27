@@ -141,7 +141,7 @@ services:
       - DISABLE_PERFORMANCE_GRAPHS=true
       - DISABLE_WEBAPP=true
       - READSB_NET_ENABLE=true
-      - READSB_NET_CONNECTOR=readsb,30005,beast_in;dump978,37981,raw_in;feed.adsb.fi,30004,beast_reduce_plus_out;feed.adsb.one,64004,beast_reduce_plus_out;in.adsb.lol,30004,beast_reduce_plus_out;multifeeder,39000,beast_in;multifeeder,39001,beast_in;multifeeder,39002,beast_in;multifeeder,39003,beast_in
+      - READSB_NET_CONNECTOR=readsb,30005,beast_in;dump978,37981,raw_in;feed.adsb.fi,30004,beast_reduce_out;feed.adsb.one,64004,beast_reduce_out;in.adsb.lol,30004,beast_reduce_out;multifeeder,39000,beast_in;multifeeder,39001,beast_in;multifeeder,39002,beast_in;multifeeder,39003,beast_in
       - UUID=00000000-0000-0000-0000-000000000000
       - MLAT_CONFIG=feed.adsb.fi,31090,39000;feed.adsb.one,64006,39001;in.adsb.lol,31090,39002;
       - READSB_NET_ONLY=true
