@@ -873,3 +873,23 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - "8001:8080"
+
+  syncthing:
+    image: lscr.io/linuxserver/syncthing:latest
+    container_name: syncthing
+    hostname: syncthing
+    profiles:
+        - backup
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${FEEDER_TZ}
+    volumes:
+      - /opt/adsb/syncthing/config:/config
+      - /opt/adsb:/adsb
+    ports:
+      - 8384:8384
+      - 22000:22000/tcp
+      - 22000:22000/udp
+      - 21027:21027/udp
+    restart: unless-stopped
