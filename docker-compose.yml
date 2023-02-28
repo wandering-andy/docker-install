@@ -910,6 +910,7 @@ services:
 
   syncthing:
     image: lscr.io/linuxserver/syncthing:latest
+    # maybe this? https://github.com/funkyfuture/docker-rpi-syncthing
     container_name: syncthing
     hostname: syncthing
     profiles:
