@@ -851,7 +851,6 @@ services:
     hostname: syncthing
     profiles:
         - backup
-        - debug
     environment:
       - PUID=1000
       - PGID=1000
