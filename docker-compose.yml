@@ -9,7 +9,7 @@ version: "3.8"
 # ----------------------------------------------------------------
 # name            contains
 # ----------------------------------------------------------------
-# no profile = base start = readsb, dump978, tar1090, lazydocker, dozzle
+# no profile = base start = readsb, dump978, tar1090
 # 
 # feeders-basic   multifeeder, piaware, planewatch
 # feeders         multifeeder, piaware, fr24, abdsx, pfclient,
@@ -876,7 +876,7 @@ services:
       - 21027:21027/udp
     restart: unless-stopped
 
-  monitoring:
+  glances:
     image: nicolargo/glances:latest
     container_name: glances
     hostname: glances
