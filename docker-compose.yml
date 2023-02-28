@@ -879,16 +879,10 @@ services:
 
 
   lazydocker:
-    build:
-      context: https://github.com/jesseduffield/lazydocker.git
-      args:
-        BASE_IMAGE_BUILDER: arm64v8/golang
-        GOARCH: arm64
-        GOARM: 8
     image: lazyteam/lazydocker
     container_name: lazydocker
     profiles:
-        - donotstart
+        - debug
     stdin_open: true
     tty: true
     volumes:
@@ -915,6 +909,7 @@ services:
     hostname: syncthing
     profiles:
         - backup
+        - debug
     environment:
       - PUID=1000
       - PGID=1000
