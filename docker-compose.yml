@@ -730,14 +730,3 @@ services:
       - "./glances.conf:/glances/conf/glances.conf"
     labels:
       - "autoheal=true"
-
-  # portainer-agent:
-  #   image: portainer-agent
-  #   container_name: portainer-agent
-  #   hostname: portainer-agent
-  #   labels:
-  #     - "autoheal=true"
-  #   restart: unless-stopped
-  #   environment:
-  #   volumes:
-  #   ports:
