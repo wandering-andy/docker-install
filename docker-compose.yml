@@ -23,6 +23,7 @@ version: "3.8"
 #
 # most current usage:
 # docker compose --profile feeders-basic --profile mlat --profile health up -d
+# docker compose --profile feeders --profile mlat --profile health up -d
 #
 
 networks:
@@ -128,9 +129,9 @@ services:
     restart: always
     labels:
       - "autoheal=true"
-    depends_on:
-      - readsb
-      - piaware
+    #depends_on:
+    #  - readsb
+    #  - piaware
     #  - adsbx
     #  - rbfeeder
     #  - radarvirtuel
@@ -176,8 +177,8 @@ services:
     tty: true
     container_name: adsbhub
     restart: always
-    depends_on:
-      - readsb
+    # depends_on:
+    #   - readsb
     labels:
       - "autoheal=true"
     environment:
@@ -196,8 +197,8 @@ services:
     restart: always
     labels:
       - "autoheal=true"
-    depends_on:
-      - readsb
+    # depends_on:
+    #   - readsb
     environment:
       - BEASTHOST=readsb
       - LAT=${FEEDER_LAT}
@@ -223,8 +224,8 @@ services:
     restart: always
     labels:
       - "autoheal=true"
-    depends_on:
-      - readsb
+    # depends_on:
+    #   - readsb
     ports:
       - 8081:8080
       - 8088:80
@@ -252,8 +253,8 @@ services:
     restart: always
     labels:
       - "autoheal=true"
-    depends_on:
-      - readsb
+    # depends_on:
+    #   - readsb
     ports:
       - 8754:8754
     environment:
@@ -296,8 +297,8 @@ services:
     restart: always
     labels:
       - "autoheal=true"
-    depends_on:
-      - readsb
+    # depends_on:
+    #   - readsb
     environment:
       - BEASTHOST=readsb
       - TZ=${FEEDER_TZ}
@@ -323,8 +324,8 @@ services:
     restart: always
     labels:
       - "autoheal=true"
-    depends_on:
-      - readsb
+    # depends_on:
+    #   - readsb
     environment:
       - BEASTHOST=readsb
       - LAT=${FEEDER_LAT}
@@ -347,8 +348,8 @@ services:
     restart: always
     labels:
       - "autoheal=true"
-    depends_on:
-      - tar1090
+    # depends_on:
+    #   - tar1090
     environment:
       - FEEDER_KEY=${RV_KEY}
       - SOURCE_HOST=tar1090:30002
@@ -378,8 +379,8 @@ services:
     restart: always
     labels:
       - "autoheal=true"
-    depends_on:
-      - readsb
+    # depends_on:
+    #   - readsb
     environment:
       - TZ=${FEEDER_TZ}
       - READSB_NET_CONNECTOR=readsb,30005,beast_in;feed.adsb.fi,30004,beast_reduce_plus_out;feed.adsb.one,64004,beast_reduce_plus_out;feed.theairtraffic.com,30004,beast_reduce_plus_out;
@@ -410,8 +411,6 @@ services:
     container_name: tar1090
     hostname: tar1090
     restart: always
-    depends_on:
-      - readsb
     labels:
       - "autoheal=true"
     environment:
