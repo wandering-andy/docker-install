@@ -13,7 +13,7 @@ version: "3.8"
 # 
 # feeders-basic   multifeeder, piaware, planewatch
 # feeders         multifeeder, piaware, fr24, abdsx, pfclient,
-#                 rbfeeder, radarvirtuel, planewatch, adsbhub, adsbx
+#                 rbfeeder, radarvirtuel, planewatch, adsbhub
 # mlat            mlathub 
 # extras          planefence, screenshot, webproxy
 # health          vnstat, autoheal, watchtower,
@@ -129,12 +129,6 @@ services:
     restart: always
     labels:
       - "autoheal=true"
-    #depends_on:
-    #  - readsb
-    #  - piaware
-    #  - adsbx
-    #  - rbfeeder
-    #  - radarvirtuel
     ports:
       - 30105:30105
     environment:
@@ -142,7 +136,7 @@ services:
       - DISABLE_PERFORMANCE_GRAPHS=true
       - DISABLE_WEBAPP=true
       - READSB_NET_ENABLE=true
-      - READSB_NET_CONNECTOR=piaware,30105,beast_in;adsbx,30105,beast_in;rbfeeder,30105,beast_in;radarvirtuel,30105,beast_in;planewatch,30105,beast_in;multifeeder,39000,beast_in;multifeeder,39001,beast_in;multifeeder,39002,beast_in
+      - READSB_NET_CONNECTOR=piaware,30105,beast_in;rbfeeder,30105,beast_in;radarvirtuel,30105,beast_in;planewatch,30105,beast_in;multifeeder,39000,beast_in;multifeeder,39001,beast_in;multifeeder,39002,beast_in
       - UUID=00000000-0000-0000-0000-000000000000
       - MLAT_CONFIG=feed.adsb.fi,31090,39000;feed.adsb.one,64006,39001;in.adsb.lol,31090,39002;
       - READSB_NET_ONLY=true
@@ -159,7 +153,6 @@ services:
   # Site:               Container:    Profile:
   # --------------------------------------------------------
   # ADSB Hub            adsbhub       feeders
-  # ADSB Exchange       adsbx         feeders
   # FlightAware         piaware       feeders, feeders-basic
   # FlightRadar24       fr24          feeders
   # Planefinder         pfclient      feeders
@@ -177,8 +170,6 @@ services:
     tty: true
     container_name: adsbhub
     restart: always
-    # depends_on:
-    #   - readsb
     labels:
       - "autoheal=true"
     environment:
@@ -186,30 +177,6 @@ services:
       - SBSHOST=readsb
       #- CLIENTKEY=${ADSBHUB_STATION_KEY}
 
-  adsbx:
-  # adsbx feeds ADS-B (from readsb) and UAT data (from dump978) to ADSBExchange
-    image: ghcr.io/sdr-enthusiasts/docker-adsbexchange
-    tty: true
-    container_name: adsbx
-    hostname: adsbx
-    profiles:
-      - feeders
-    restart: always
-    labels:
-      - "autoheal=true"
-    # depends_on:
-    #   - readsb
-    environment:
-      - BEASTHOST=readsb
-      - LAT=${FEEDER_LAT}
-      - LONG=${FEEDER_LONG}
-      - ALT=${FEEDER_ALT_M}m
-      - SITENAME=${ADSBX_SITENAME}
-      - UUID=${ADSBX_UUID}
-      - TZ=${FEEDER_TZ}
-    tmpfs:
-      - /run:exec,size=64M,uid=1000,gid=1000
-      - /var/log
 
   piaware:
   # piaware feeds ADS-B and UAT data (from readsb) to FlightAware.
@@ -224,8 +191,6 @@ services:
     restart: always
     labels:
       - "autoheal=true"
-    # depends_on:
-    #   - readsb
     ports:
       - 8081:8080
       - 8088:80
@@ -255,8 +220,6 @@ services:
     restart: always
     labels:
       - "autoheal=true"
-    # depends_on:
-    #   - readsb
     ports:
       - 8754:8754
     environment:
@@ -299,8 +262,6 @@ services:
     restart: always
     labels:
       - "autoheal=true"
-    # depends_on:
-    #   - readsb
     environment:
       - BEASTHOST=readsb
       - TZ=${FEEDER_TZ}
@@ -326,8 +287,6 @@ services:
     restart: always
     labels:
       - "autoheal=true"
-    # depends_on:
-    #   - readsb
     environment:
       - BEASTHOST=readsb
       - LAT=${FEEDER_LAT}
@@ -350,8 +309,6 @@ services:
     restart: always
     labels:
       - "autoheal=true"
-    # depends_on:
-    #   - tar1090
     environment:
       - FEEDER_KEY=${RV_KEY}
       - SOURCE_HOST=tar1090:30002
@@ -381,8 +338,6 @@ services:
     restart: always
     labels:
       - "autoheal=true"
-    # depends_on:
-    #   - readsb
     environment:
       - TZ=${FEEDER_TZ}
       - READSB_NET_CONNECTOR=readsb,30005,beast_in;feed.adsb.fi,30004,beast_reduce_plus_out;feed.adsb.one,64004,beast_reduce_plus_out;feed.theairtraffic.com,30004,beast_reduce_plus_out;
@@ -427,6 +382,8 @@ services:
       - HEYWHATSTHAT_PANORAMA_ID=${HEYWHATSTHAT_ID}
       - HEYWHATSTHAT_ALTS=${HEYWHATSTHAT_ALTS}
       - ENABLE_TIMELAPSE1090=false
+      - ENABLE_UAT=yes
+
       - MLATHOST=mlathub
       - TAR1090_ENABLE_AC_DB=true
       - TAR1090_FLIGHTAWARELINKS=true
