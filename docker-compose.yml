@@ -423,10 +423,10 @@ services:
       - LONG=${FEEDER_LONG}
       - TAR1090_DEFAULTCENTERLAT=${FEEDER_LAT}
       - TAR1090_DEFAULTCENTERLON=${FEEDER_LONG}
-      - TAR1090_SITESHOW=true
+      - TAR1090_SITESHOW=false
       - HEYWHATSTHAT_PANORAMA_ID=${HEYWHATSTHAT_ID}
       - HEYWHATSTHAT_ALTS=${HEYWHATSTHAT_ALTS}
-      - ENABLE_TIMELAPSE1090=true
+      - ENABLE_TIMELAPSE1090=false
       - MLATHOST=mlathub
       - TAR1090_ENABLE_AC_DB=true
       - TAR1090_FLIGHTAWARELINKS=true
@@ -435,6 +435,7 @@ services:
     volumes:
       - "/opt/adsb/tar1090/heatmap:/var/globe_history"
       - "/opt/adsb/tar1090/timelapse:/var/timelapse1090"
+      - "/opt/adsb/tar1090/graphs1090:/var/lib/collectd"
     tmpfs:
       - /run:exec,size=64M
       - /var/log
