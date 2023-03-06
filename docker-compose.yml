@@ -235,6 +235,8 @@ services:
       - LONG=${FEEDER_LONG}
       - TZ=${FEEDER_TZ}
       - FEEDER_ID=${PIAWARE_FEEDER_ID}
+      - UAT_RECEIVER_TYPE=relay
+      - UAT_RECEIVER_HOST=dump978
     tmpfs:
       - /run:exec,size=64M
       - /var/log
@@ -501,8 +503,8 @@ services:
     restart: always
     labels:
       - "autoheal=true"
-    depends_on:
-      - rbfeeder
+    # depends_on:
+    #   - rbfeeder
     devices:
       - /dev/bus/usb:/dev/bus/usb
     ports:
