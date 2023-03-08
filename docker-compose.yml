@@ -235,7 +235,7 @@ services:
   # It also includes a GUI Radar website and a status website  
     image: ghcr.io/sdr-enthusiasts/docker-planefinder:latest
     profiles:
-      - feeders
+      - donotstart
     tty: true
     container_name: pfclient
     restart: always
