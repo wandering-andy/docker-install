@@ -42,7 +42,7 @@ services:
 
   readsb:
     # readsb retrieves 1090MHz Mode A/C/S  data from the SDR(s)
-    image: ghcr.io/sdr-enthusiasts/docker-readsb-protobuf
+    image: ghcr.io/sdr-enthusiasts/docker-readsb-protobuf:latest
     tty: true
     container_name: readsb
     hostname: readsb
@@ -93,7 +93,7 @@ services:
 
   dump978:
     # dump978 gets UAT data from the SDR
-    image: ghcr.io/sdr-enthusiasts/docker-dump978
+    image: ghcr.io/sdr-enthusiasts/docker-dump978:latest
     tty: true
     container_name: dump978
     hostname: dump978
@@ -120,7 +120,7 @@ services:
   mlathub:
     # mlathub aggregates the MLAT results from various containers
     # and makes this available to the visualization programs for display.
-    image: ghcr.io/sdr-enthusiasts/docker-readsb-protobuf
+    image: ghcr.io/sdr-enthusiasts/docker-readsb-protobuf:latest
     profiles:
       - mlat
     tty: true
@@ -164,7 +164,7 @@ services:
 
   adsbhub:
   # adsbhub feeds ADS-B and UAT data (from readsb) to ADSB Hub.
-    image: ghcr.io/sdr-enthusiasts/docker-adsbhub
+    image: ghcr.io/sdr-enthusiasts/docker-adsbhub:latest
     profiles:
       - feeders
     tty: true
@@ -181,7 +181,7 @@ services:
   piaware:
   # piaware feeds ADS-B and UAT data (from readsb) to FlightAware.
   # It also includes a GUI Radar website and a status website
-    image: ghcr.io/sdr-enthusiasts/docker-piaware
+    image: ghcr.io/sdr-enthusiasts/docker-piaware:latest
     profiles:
       - feeders
       - feeders-basic
@@ -211,7 +211,7 @@ services:
   # It also includes a status website. Please be careful
     # not to expose the status website to the internet as users may be able to start/stop/change the service from there.
     # Also note that FR24 has requested NOT to enable MLAT for those station that feed to multiple services; as such, it's commented out.
-    image: ghcr.io/sdr-enthusiasts/docker-flightradar24
+    image: ghcr.io/sdr-enthusiasts/docker-flightradar24:latest
     profiles:
       - feeders
     tty: true
@@ -252,7 +252,7 @@ services:
 
   planewatch:
   # planewatch feeds ADS-B and UAT data (from readsb) to Plane.Watch.
-    image: planewatch/plane-watch
+    image: planewatch/plane-watch:latest
     profiles:
       - feeders
       - feeders-basic
@@ -278,7 +278,7 @@ services:
 
   rbfeeder:
   # rbfeeder feeds ADS-B and UAT data (from readsb) to RadarBox.
-    image: ghcr.io/sdr-enthusiasts/docker-radarbox
+    image: ghcr.io/sdr-enthusiasts/docker-radarbox:latest
     profiles:
       - feeders
     tty: true
@@ -300,7 +300,7 @@ services:
 
   radarvirtuel:
   # radarvirtuel feeds ADS-B and UAT data (from readsb) to RadarVirtuel.
-    image: ghcr.io/sdr-enthusiasts/docker-radarvirtuel
+    image: ghcr.io/sdr-enthusiasts/docker-radarvirtuel:latest
     profiles:
       - feeders
     tty: true
@@ -328,7 +328,7 @@ services:
 
   multifeeder:
   # Multifeeder (adsb.fi,adsb.lol,adsb.one and any other of the "new" aggregators)
-    image: ghcr.io/sdr-enthusiasts/docker-multifeeder
+    image: ghcr.io/sdr-enthusiasts/docker-multifeeder:latest
     profiles:
       - feeders
       - feeders-basic
@@ -362,8 +362,8 @@ services:
   # screenshot (auxilary container used with planefence -- only runs well on Pi4)
 
 
-  tar1090:
-    image: ghcr.io/sdr-enthusiasts/docker-tar1090
+tar1090:
+    image: ghcr.io/sdr-enthusiasts/docker-tar1090:latest
     tty: true
     container_name: tar1090
     hostname: tar1090
@@ -373,27 +373,33 @@ services:
     environment:
       - UPDATE_TAR1090=true
       - TZ=${FEEDER_TZ}
+      - READSB_EXTRA_ARGS=--forward-mlat
       - BEASTHOST=readsb
+      - MLATHOST=mlathub
       - LAT=${FEEDER_LAT}
       - LONG=${FEEDER_LONG}
-      - TAR1090_DEFAULTCENTERLAT=${FEEDER_LAT}
-      - TAR1090_DEFAULTCENTERLON=${FEEDER_LONG}
-      - TAR1090_SITESHOW=false
       - HEYWHATSTHAT_PANORAMA_ID=${HEYWHATSTHAT_ID}
       - HEYWHATSTHAT_ALTS=${HEYWHATSTHAT_ALTS}
       - ENABLE_TIMELAPSE1090=false
-      - ENABLE_UAT=yes
-      # Need to add URL. Doesn't need data/aircraft.json
-      - MLATHOST=mlathub
+      - ENABLE_978=yes
+      - URL_978=http://dump978/skyaware978
+      - PTRACKS=12
+      - TAR1090_DEFAULTCENTERLAT=${FEEDER_LAT}
+      - TAR1090_DEFAULTCENTERLON=${FEEDER_LONG}
+      - TAR1090_SITESHOW=false
       - TAR1090_ENABLE_AC_DB=true
       - TAR1090_FLIGHTAWARELINKS=true
-      - TAR1090_DISPLAYUNITS=${TAR1090_DISPLAYUNITS}
-      - TAR1090_RANGE_OUTLINE_COLORED_BY_ALTITUDE=${TAR1090_RANGE_OUTLINE_COLORED_BY_ALTITUDE}
-      - TAR1090_RANGE_OUTLINE_WIDTH=${TAR1090_RANGE_OUTLINE_WIDTH}
-      - TAR1090_MAPDIM=${TAR1090_MAPDIM}
-      - TAR1090_RANGERINGS=${TAR1090_RANGERINGS}
-      - TAR1090_RANGERINGSDISTANCES=${TAR1090_RANGERINGSDISTANCES}
-      - TAR1090_RANGERINGSCOLORS=${TAR1090_RANGERINGSCOLORS}
+      - TAR1090_DISPLAYUNITS=imperial
+      - TAR1090_RANGE_OUTLINE_COLORED_BY_ALTITUDE=true
+      - TAR1090_RANGE_OUTLINE_WIDTH=2.0
+      - TAR1090_MAPDIM=true
+      - TAR1090_RANGERINGS=true
+      - TAR1090_RANGERINGSDISTANCES=50,100,150,200
+      - TAR1090_RANGERINGSCOLORS="'#1A237E','#0D47A1','#42A5F5','#64B5F6'"
+      - GRAPHS1090_DARKMODE=true
+      - GRAPHS1090_SIZE=large
+      - GRAPHS1090_ALL_LARGE=yes
+      - GRAPHS1090_MAX_MESSAGES_LINE=yes
     ports:
       - 8082:80
     volumes:
@@ -403,6 +409,7 @@ services:
     tmpfs:
       - /run:exec,size=64M
       - /var/log
+
 
   planefence:
   # Note - after initial startup, please edit /opt/adsb/planefence/config/planefence.config.

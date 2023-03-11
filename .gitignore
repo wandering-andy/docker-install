@@ -3,5 +3,5 @@
 .flaskenv*
 !.env.project
 !.env.vault
-*glances*
 *.conf
+*.txt
