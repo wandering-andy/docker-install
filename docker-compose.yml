@@ -175,7 +175,7 @@ services:
     environment:
       - TZ=${FEEDER_TZ}
       - SBSHOST=readsb
-      #- CLIENTKEY=${ADSBHUB_STATION_KEY}
+      - CLIENTKEY=${ADSBHUB_STATION_KEY}
 
 
   piaware:
@@ -224,7 +224,7 @@ services:
       - 8754:8754
     environment:
       - BEASTHOST=readsb
-      - TZ=${FEEDER_TZ}
+      - TZ=-6
       - FR24KEY=${FR24_SHARING_KEY}
     #      - MLAT=yes
     tmpfs:
@@ -235,7 +235,7 @@ services:
   # It also includes a GUI Radar website and a status website  
     image: ghcr.io/sdr-enthusiasts/docker-planefinder:latest
     profiles:
-      - donotstart
+      - feeders
     tty: true
     container_name: pfclient
     restart: always
@@ -362,7 +362,7 @@ services:
   # screenshot (auxilary container used with planefence -- only runs well on Pi4)
 
 
-tar1090:
+  tar1090:
     image: ghcr.io/sdr-enthusiasts/docker-tar1090:latest
     tty: true
     container_name: tar1090
@@ -390,12 +390,12 @@ tar1090:
       - TAR1090_ENABLE_AC_DB=true
       - TAR1090_FLIGHTAWARELINKS=true
       - TAR1090_DISPLAYUNITS=imperial
-      - TAR1090_RANGE_OUTLINE_COLORED_BY_ALTITUDE=true
-      - TAR1090_RANGE_OUTLINE_WIDTH=2.0
-      - TAR1090_MAPDIM=true
-      - TAR1090_RANGERINGS=true
-      - TAR1090_RANGERINGSDISTANCES=50,100,150,200
-      - TAR1090_RANGERINGSCOLORS="'#1A237E','#0D47A1','#42A5F5','#64B5F6'"
+      # - TAR1090_RANGE_OUTLINE_COLORED_BY_ALTITUDE=true
+      # - TAR1090_RANGE_OUTLINE_WIDTH=2.0
+      # - TAR1090_MAPDIM=true
+      # - TAR1090_RANGERINGS=true
+      # - TAR1090_RANGERINGSDISTANCES=50,100,150,200
+      # - TAR1090_RANGERINGSCOLORS="'#1A237E','#0D47A1','#42A5F5','#64B5F6'"
       - GRAPHS1090_DARKMODE=true
       - GRAPHS1090_SIZE=large
       - GRAPHS1090_ALL_LARGE=yes
@@ -459,145 +459,6 @@ tar1090:
       - MAXTIME=60
     ports:
       - 5042:5042
-
- 
-#####################################################################################
-# Additional aircraft related containers: airband
-# This container allows listening to Airband radio and feeding this data to RadarBox.
-# It also creates a local Icecast station you can listen to.
-
-  airband:
-    image: fredclausen/rtlsdrairband
-    profiles:
-      - acars
-    tty: true
-    container_name: airband
-    restart: always
-    labels:
-      - "autoheal=true"
-    # depends_on:
-    #   - rbfeeder
-    devices:
-      - /dev/bus/usb:/dev/bus/usb
-    ports:
-      - 8000:8000
-    environment:
-      - RTLSDRAIRBAND_CUSTOMCONFIG=true
-#      - ICECAST_CUSTOMCONFIG=true
-    volumes:
-      - /opt/adsb/rtlsdr-airband:/run/rtlsdr-airband 
-
-
-##############################################################################################################
-# Additional aircraft related containers: ACARS/VDLM
-# With these containers, you can receive and look at ACARS and VDL-M2 messages and feed those to airframes.io.
-# Note that the plane.watch container is also set up to forward these messages.
-# The set consists of the following containers:
-#   acarsdec: receives and decodes ACARS data from a dedicated RTL-SDR dongle
-#   dumpvdl2: receives and decodes VDL-M2 data from a dedicated RTL-SDR dongle
-#   acars_router: functions as an aggregator/distributor of the received ACARS and VDL-M2 data
-#   acarshub: visualization tool for ACARS and VDL-M2 data
-
-  acarsdec:
-    image: ghcr.io/sdr-enthusiasts/docker-acarsdec:latest
-    profiles:
-      - acars
-    tty: true
-    container_name: acarsdec
-    restart: always
-    labels:
-      - "autoheal=true"
-    devices:
-      - /dev/bus/usb:/dev/bus/usb
-    environment:
-      - TZ=${FEEDER_TZ}
-      - SERIAL=${ACARS_DONGLE_SERIAL}
-      - FREQUENCIES=${ACARS_FREQUENCIES}
-      - GAIN=${ACARS_DONGLE_GAIN}
-      - SERVER=acars_router
-      - SERVER_PORT=5550
-      - FEED_ID=${ACARS_FEEDER_ID}
-    tmpfs:
-      - /run:exec,size=64M
-      - /var/log
-
-
-  dumpvdl2:
-    image: ghcr.io/sdr-enthusiasts/docker-dumpvdl2:latest
-    profiles:
-      - acars
-    tty: true
-    container_name: dumpvdl2
-    restart: always
-    labels:
-      - "autoheal=true"
-    devices:
-      - /dev/bus/usb:/dev/bus/usb
-    environment:
-      - TZ=${FEEDER_TZ}
-      - SERIAL=${VDLM_DONGLE_SERIAL}
-      - FREQUENCIES=${VDLM_FREQUENCIES}
-      - GAIN=${VDLM_DONGLE_GAIN}
-      - ZMQ_MODE=server
-      - ZMQ_ENDPOINT=tcp://0.0.0.0:45555
-      - FEED_ID=${VDLM_FEEDER_ID}
-      - VDLM_FILTER_ENABLE=
-      - QUIET_LOGS=FALSE
-      - SERVER=
-    tmpfs:
-      - /run:exec,size=64M
-      - /var/log
-
-
-  acars_router:
-    image: ghcr.io/sdr-enthusiasts/acars_router:latest
-    profiles:
-      - acars
-    tty: true
-    container_name: acars_router
-    restart: always
-    labels:
-      - "autoheal=true"
-    environment:
-      - TZ=${FEEDER_TZ}
-      - AR_SEND_UDP_ACARS=acarshub:5550;feed.acars.io:5550
-      - AR_SEND_UDP_VDLM2=acarshub:5555
-      - AR_SEND_TCP_VDLM2=feed.acars.io:5553
-      - AR_RECV_ZMQ_VDLM2=dumpvdl2:45555
-#      - AR_VERBOSITY=1
-    ports:
-     - 15550:15550
-     - 15555:15555
-    tmpfs:
-      - /run:exec,size=64M
-      - /var/log
-
-
-  acarshub:
-    image: ghcr.io/sdr-enthusiasts/docker-acarshub:latest
-    profiles:
-      - acars
-    tty: true
-    container_name: acarshub
-    hostname: acarshub
-    restart: always
-    labels:
-      - "autoheal=true"
-    ports:
-      - 8091:80
-    environment:
-      - TZ=${FEEDER_TZ}
-      - ADSB_LAT=${FEEDER_LAT}
-      - ADSB_LON=${FEEDER_LONG}
-      - ENABLE_ADSB=true
-      - ADSB_URL=http://tar1090/data/aircraft.json
-      - ENABLE_ACARS=external
-      - ENABLE_VDLM=external
-    volumes:
-      - /opt/adsb/acars_data:/run/acars
-    tmpfs:
-      - /run:exec,size=64M
-      - /var/log
 
 
   ############################################################################################################
