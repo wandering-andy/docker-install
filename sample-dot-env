@@ -1,15 +1,21 @@
 # Config parameters for ASDB Docker Containers:
 # Station characteristics:
-FEEDER_ALT_FT=xx
-FEEDER_ALT_M=xx
-FEEDER_LAT=xx.xxxxx
-FEEDER_LONG=xx.xxxxx
-FEEDER_TZ=America/New_York
-HEYWHATSTHAT=XXXXXXX
+FEEDER_ALT_FT=<your antenna's altitude in feet>
+FEEDER_ALT_M=<your antenna's altitude in metres>
+FEEDER_LAT=<your latitude>
+FEEDER_LONG=<your longitude>
+FEEDER_TZ=<your timezone>
+FEEDER_NAME=<your location name>
+FEEDER_TZ=<America/New_York>
+FEEDER_HEYWHATSTHAT_ID=<your heywhatsthat ID from the step above>
+FEEDER_HEYWHATSTHAT_ALTS=<desired theoretical range altitudes>
+#
+# SDR parameters:
+ADSB_SDR_SERIAL=<your SDR serial>
+ADSB_SDR_GAIN=<your desired gain, or autogain>
+ADSB_SDR_PPM=<your PPM from the step above>
 #
 # Feeder parameters:
-# ADSBX_UUID=exxxxxx-xxxa-xxxx-xxxx-xxxxxxxxxxxx2
-# ADSBX_SITENAME=xxxx-0
 PIAWARE_FEEDER_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 FR24_SHARING_KEY=xxxxxxxxxxxxxxx
 FR24_RADAR_ID=T-xxxxxx
@@ -19,20 +25,38 @@ PLANEFINDER_SHARECODE=xxxxxxxxxxxxx
 PLANEWATCH_KEY=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 RV_KEY="xxxx:xxxxxxxxxxxxxxxxxxxxx"
 MLAT_SITE_NAME=my_site_name
+ULTRAFEEDER_UUID=<your UUID from the step above>
+#
+# VRS parameters:
+VRS_ADMIN_USERNAME=admin
+VRS_ADMIN_PASSWORD=my_password!234
 #
 # ACARS/VDML related parameters:
-ADSB_DONGLE_SERIAL="dongle-serial-number"
-ADSB_DONGLE_GAIN=autogain
-ADSB_DONGLE_PPM="dongle-ppm"
-UAT_DONGLE_SERIAL="dongle-serial-number"
-UAT_DONGLE_GAIN=autogain
-UAT_DONGLE_PPM="dongle-ppm"
+ADSB_SDR_SERIAL="sdr-serial-number"
+ADSB_SDR_GAIN=autogain
+ADSB_SDR_PPM="sdr-ppm"
+UAT_SDR_SERIAL="sdr-serial-number"
+UAT_SDR_GAIN=autogain
+UAT_SDR_PPM="sdr-ppm"
 ACARS_FREQUENCIES='130.450;130.825;130.850;131.525;131.550;131.725;131.825;131.850'
 ACARS_FEEDER_ID=XX-XXXX-ACARS
-VDLM_DONGLE_SERIAL="dongle-serial-number"
-VDLM_DONGLE_GAIN="dongle-gain"
+VDLM_SDR_SERIAL="sdr-serial-number"
+VDLM_SDR_GAIN="sdr-gain"
 VDLM_FREQUENCIES='136.650;136.675;136.725;136.775;136.825;136.875;136.975'
 VDLM_FEEDER_ID=XX-XXXX-VDL
 #
-# Other parameters:
-MY_HOST=192.168.1.184
+# AIS related parameters:
+SX_SHARING_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+SX_SERIAL_NUMBER=SXTRPI00xxxx
+SX_RTLSDR_DEVICE_SERIAL=sdr-serial-number
+SX_RTLSDR_GAIN=auto
+SX_UDP_FEEDS=5.9.207.224:xxxxx,ais.vesselfinder.com:xxxx,144.76.54.111:xxxxx,ais2adsb:9000,aisfeed.hpradar.com:4006:JSON on,83.220.137.136:xxxxx
+SX_EXTRA_OPTIONS=-p xx -a 192K -H http://aprs.fi/jsonais/post/xxxxxx ID AA0AA PROTOCOL aprs INTERVAL 30 RESPONSE off -H http://feed.airframes.io:5599 ID my_station_name INTERVAL 30 RESPONSE off
+SX_STATION_NAME=My&nbsp;station&nbsp;name&nbsp;
+VESSELALERT_MASTODON_TOKEN=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+VESSELALERT_MASTODON_CUSTOM_FIELD=Created with VesselAlert by kx1t - https://vesselalert.com
+VESSELALERT_DISCORD_NAME=Station_name near xxxxx harbor
+VESSELALERT_AVATAR_URL=https://link.to/my_avatar.jpg
+VESSELALERT_DISCORD_WEBHOOKS=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx,xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+
